@@ -1,8 +1,11 @@
 import SwiftUI
 import UIKit
 
+let height = CGFloat(800)
+
 var sum = 0
 var sums = [0,0,0,0,0,0]
+var max: Double = 0
 var angles = [Angle(degrees: 0), Angle(degrees: 0), Angle(degrees: 0), Angle(degrees: 0), Angle(degrees: 0), Angle(degrees: 0), Angle(degrees: 360)]
 
 func calculateSum() {
@@ -20,6 +23,9 @@ func calculateSum() {
 func calculateAngles() {
     var temp:Double = 0.0
     for i in 1...sums.count {
+        if max < Double(sums[i-1]) {
+            max = Double(sums[i-1])
+        }
         temp += Double(sums[i-1])
         angles[i] = Angle(degrees: temp*360.0/Double(sum))
     }
@@ -183,31 +189,63 @@ struct ExpenseSummary: View {
     @State private var showChart = false
     var body: some View {
         VStack {
-            ZStack {
-                PieChart(startAngle: Angle(degrees: 0), endAngle: Angle(degrees: 0))
-                if (showChart == true) {
-                    PieChart(startAngle: angles[0], endAngle: angles[1])
-                        .foregroundColor(.green)
-                        .animation(.linear(duration: 2))
-                    PieChart(startAngle: angles[1], endAngle: angles[2])
-                        .foregroundColor(.orange)
-                        .animation(.linear(duration: 2))
-                    PieChart(startAngle: angles[2], endAngle: angles[3])
-                        .foregroundColor(.red)
-                        .animation(.linear(duration: 2))
-                    PieChart(startAngle: angles[3], endAngle: angles[4])
-                        .foregroundColor(Color(.cyan))
-                        .animation(.linear(duration: 2))
-                    PieChart(startAngle: angles[4], endAngle: angles[5])
-                        .foregroundColor(.blue)
-                        .animation(.linear(duration: 2))
-                    PieChart(startAngle: angles[5], endAngle: angles[6])
-                        .foregroundColor(.gray)
-                        .animation(.linear(duration: 2))
+            TabView {
+                ZStack {
+                    PieChart(startAngle: Angle(degrees: 0), endAngle: Angle(degrees: 0))
+                    if (showChart == true) {
+                        PieChart(startAngle: angles[0], endAngle: angles[1])
+                            .foregroundColor(.green)
+                            .animation(.linear(duration: 2))
+                        PieChart(startAngle: angles[1], endAngle: angles[2])
+                            .foregroundColor(.orange)
+                            .animation(.linear(duration: 2))
+                        PieChart(startAngle: angles[2], endAngle: angles[3])
+                            .foregroundColor(.red)
+                            .animation(.linear(duration: 2))
+                        PieChart(startAngle: angles[3], endAngle: angles[4])
+                            .foregroundColor(Color(.cyan))
+                            .animation(.linear(duration: 2))
+                        PieChart(startAngle: angles[4], endAngle: angles[5])
+                            .foregroundColor(.blue)
+                            .animation(.linear(duration: 2))
+                        PieChart(startAngle: angles[5], endAngle: angles[6])
+                            .foregroundColor(.gray)
+                            .animation(.linear(duration: 2))
+                    }
                 }
+                .animation(.easeIn(duration: 2))
+                .padding(.horizontal)
+                HStack {
+                    Spacer()
+                    Rectangle()
+                        .foregroundColor(.green)
+                        .frame(width: 40, height: CGFloat(sums[0])/CGFloat(max)*height)
+                        .position(x: 25, y: 513)
+                    Rectangle()
+                        .foregroundColor(.orange)
+                        .frame(width: 40, height: CGFloat(sums[1])/CGFloat(max)*height)
+                        .position(x: 25, y: 513)
+                    Rectangle()
+                        .foregroundColor(.red)
+                        .frame(width: 40, height: CGFloat(sums[2])/CGFloat(max)*height)
+                        .position(x: 25, y: 513)
+                    Rectangle()
+                        .foregroundColor(Color(.cyan))
+                        .frame(width: 40, height: CGFloat(sums[3])/CGFloat(max)*height)
+                        .position(x: 25, y: 513)
+                    Rectangle()
+                        .foregroundColor(.blue)
+                        .frame(width: 40, height: CGFloat(sums[4])/CGFloat(max)*height)
+                        .position(x: 25, y: 513)
+                    Rectangle()
+                        .foregroundColor(.gray)
+                        .frame(width: 40, height: CGFloat(sums[5])/CGFloat(max)*height)
+                        .position(x: 25, y: 513)
+//                    Spacer()
+                }
+                .frame(alignment: .bottom)
             }
-            .animation(.easeIn(duration: 2))
-            .padding(.horizontal)
+            .tabViewStyle(PageTabViewStyle())
             HStack {
                 Text("總花費 $\(sum)")
                     .font(.title)
